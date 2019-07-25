@@ -12,12 +12,12 @@ let init = async (templateName, projectName) => {
     inquirer.prompt([
       {
         name: 'description',
-        message: 'Please enter the project description: '
+        message: 'Please enter the project description: ',
       },
       {
         name: 'author',
-        message: 'Please enter the author name: '
-      }
+        message: 'Please enter the author name: ',
+      },
     ]).then(async (answer) => {
       //下载模板 选择模板
       //通过配置文件，获取模板信息
@@ -26,7 +26,7 @@ let init = async (templateName, projectName) => {
       downloadLocal(templateName, projectName).then(() => {
         loading.succeed();
         const fileName = `${projectName}/package.json`;
-        if(fs.existsSync(fileName)){
+        if (fs.existsSync(fileName)) {
           const data = fs.readFileSync(fileName).toString();
           let json = JSON.parse(data);
           json.name = projectName;
@@ -40,11 +40,10 @@ let init = async (templateName, projectName) => {
         loading.fail();
       });
     });
-  }else {
+  } else {
     //项目已经存在
     console.log(symbol.error, chalk.red('The project already exists'));
   }
-}
+};
 
 module.exports = init;
-

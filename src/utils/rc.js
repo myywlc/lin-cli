@@ -19,7 +19,7 @@ export const get = async (key) => {
     return opts[key];
   }
   return '';
-}
+};
 
 export const getAll = async () => {
   const exit = await exits(RC);
@@ -30,7 +30,7 @@ export const getAll = async () => {
     return opts;
   }
   return {};
-}
+};
 
 export const set = async (key, value) => {
   const exit = await exits(RC);
@@ -38,11 +38,11 @@ export const set = async (key, value) => {
   if (exit) {
     opts = await readFile(RC, 'utf8');
     opts = decode(opts);
-    if(!key) {
+    if (!key) {
       console.log(chalk.red(chalk.bold('Error:')), chalk.red('key is required'));
       return;
     }
-    if(!value) {
+    if (!value) {
       console.log(chalk.red(chalk.bold('Error:')), chalk.red('value is required'));
       return;
     }
@@ -51,7 +51,7 @@ export const set = async (key, value) => {
     opts = Object.assign(DEFAULTS, { [key]: value });
   }
   await writeFile(RC, encode(opts), 'utf8');
-}
+};
 
 export const remove = async (key) => {
   const exit = await exits(RC);
@@ -62,4 +62,4 @@ export const remove = async (key) => {
     delete opts[key];
     await writeFile(RC, encode(opts), 'utf8');
   }
-}
+};

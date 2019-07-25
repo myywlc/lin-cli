@@ -12,7 +12,7 @@ let config = async (action, key, value) => {
         let obj = await getAll();
         Object.keys(obj).forEach(key => {
           console.log(`${key}=${obj[key]}`);
-        })
+        });
       }
       break;
     case 'set':
@@ -24,6 +24,7 @@ let config = async (action, key, value) => {
     default:
       break;
   }
-}
+};
 
 module.exports = config;
+

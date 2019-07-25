@@ -36,10 +36,10 @@ var actionMap = {
 
   }
   //other commands
+};
 
-
-  // 添加 init / config 命令
-};Object.keys(actionMap).forEach(function (action) {
+// 添加 init / config 命令
+Object.keys(actionMap).forEach(function (action) {
   _commander2.default.command(action).description(actionMap[action].description).alias(actionMap[action].alias) //别名
   .action(function () {
     switch (action) {
@@ -65,6 +65,7 @@ function help() {
   });
   console.log('\r');
 }
+
 _commander2.default.usage('<command> [options]');
 // lin -h
 _commander2.default.on('-h', help);
@@ -76,6 +77,7 @@ _commander2.default.version(_constants.VERSION, '-V --version').parse(process.ar
 if (!process.argv.slice(2).length) {
   _commander2.default.outputHelp(make_green);
 }
+
 function make_green(txt) {
   return _chalk2.default.green(txt);
 }

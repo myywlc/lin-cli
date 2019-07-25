@@ -1,4 +1,4 @@
-import {version} from '../../package.json';
+import { version } from '../../package.json';
 
 //当前 package.json 的版本号
 export const VERSION = version;
@@ -15,5 +15,5 @@ export const RC = `${HOME}/.linrc`;
 // 模板下载地址可配置
 export const DEFAULTS = {
   registry: 'YvetteLau',
-  type: 'users'
-}
+  type: 'users',
+};

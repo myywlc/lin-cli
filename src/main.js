@@ -13,8 +13,8 @@ let actionMap = {
   init: {
     description: 'generate a new project from a template',
     usages: [
-      'lin init templateName projectName'
-    ]
+      'lin init templateName projectName',
+    ],
   },
   config: {
     alias: 'cfg',
@@ -22,12 +22,12 @@ let actionMap = {
     usages: [
       'lin config set <k> <v>',
       'lin config get <k>',
-      'lin config remove <k>'
-    ]
+      'lin config remove <k>',
+    ],
 
   },
   //other commands
-}
+};
 
 // 添加 init / config 命令
 Object.keys(actionMap).forEach((action) => {
@@ -58,6 +58,7 @@ function help() {
   });
   console.log('\r');
 }
+
 program.usage('<command> [options]');
 // lin -h
 program.on('-h', help);
@@ -69,6 +70,7 @@ program.version(VERSION, '-V --version').parse(process.argv);
 if (!process.argv.slice(2).length) {
   program.outputHelp(make_green);
 }
+
 function make_green(txt) {
   return chalk.green(txt);
 }

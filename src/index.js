@@ -5,3 +5,4 @@ let apply = (action, ...args) => {
 };
 
 export default apply;
+

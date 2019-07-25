@@ -12,4 +12,4 @@ export const downloadLocal = async (templateName, projectName) => {
       resolve();
     });
   });
-}
+};
