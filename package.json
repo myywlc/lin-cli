@@ -11,7 +11,7 @@
     "watch": "npm run compile -- --watch"
   },
   "keywords": [],
-  "author": "",
+  "author": "myywlc",
   "license": "ISC",
   "dependencies": {
     "babel-cli": "^6.26.0",
