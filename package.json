@@ -1,5 +1,5 @@
 {
-  "name": "lin-cli",
+  "name": "@myywlc/lin-cli",
   "version": "0.0.1",
   "description": "lin cli",
   "main": "index.js",
