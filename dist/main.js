@@ -33,7 +33,6 @@ var actionMap = {
     alias: 'cfg',
     description: 'config .linrc',
     usages: ['lin config set <k> <v>', 'lin config get <k>', 'lin config remove <k>']
-
   }
   //other commands
 };

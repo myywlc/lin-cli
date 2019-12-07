@@ -12,26 +12,20 @@ import chalk from 'chalk';
 let actionMap = {
   init: {
     description: 'generate a new project from a template',
-    usages: [
-      'lin init templateName projectName',
-    ],
+    usages: ['lin init templateName projectName'],
   },
   config: {
     alias: 'cfg',
     description: 'config .linrc',
-    usages: [
-      'lin config set <k> <v>',
-      'lin config get <k>',
-      'lin config remove <k>',
-    ],
-
+    usages: ['lin config set <k> <v>', 'lin config get <k>', 'lin config remove <k>'],
   },
   //other commands
 };
 
 // 添加 init / config 命令
-Object.keys(actionMap).forEach((action) => {
-  program.command(action)
+Object.keys(actionMap).forEach(action => {
+  program
+    .command(action)
     .description(actionMap[action].description)
     .alias(actionMap[action].alias) //别名
     .action(() => {
@@ -51,7 +45,7 @@ Object.keys(actionMap).forEach((action) => {
 
 function help() {
   console.log('\r\nUsage:');
-  Object.keys(actionMap).forEach((action) => {
+  Object.keys(actionMap).forEach(action => {
     actionMap[action].usages.forEach(usage => {
       console.log('  - ' + usage);
     });

@@ -1,7 +1,7 @@
 {
   "name": "lin-cli",
-  "version": "1.0.0",
-  "description": "lin-cli",
+  "version": "0.0.1",
+  "description": "lin cli",
   "main": "index.js",
   "bin": {
     "lin": "./bin/www"

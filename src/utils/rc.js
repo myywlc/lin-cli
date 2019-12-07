@@ -10,7 +10,7 @@ const writeFile = promisify(fs.writeFile);
 
 //RC 是配置文件
 //DEFAULTS 是默认的配置
-export const get = async (key) => {
+export const get = async key => {
   const exit = await exits(RC);
   let opts;
   if (exit) {
@@ -53,7 +53,7 @@ export const set = async (key, value) => {
   await writeFile(RC, encode(opts), 'utf8');
 };
 
-export const remove = async (key) => {
+export const remove = async key => {
   const exit = await exits(RC);
   let opts;
   if (exit) {
