@@ -63,7 +63,8 @@ program.usage('<command> [options]');
 // lin -h
 program.on('-h', help);
 program.on('--help', help);
-// lin -V   VERSION 为 package.json 中的版本号
+
+// lin -v   VERSION 为 package.json 中的版本号
 program.version(VERSION, '-v --version');
 
 program.parse(process.argv);
@@ -76,5 +77,3 @@ if (!process.argv.slice(2).length) {
 function make_green(txt) {
   return chalk.green(txt);
 }
-
-
