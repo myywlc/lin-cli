@@ -1,9 +1,14 @@
-<h1 align="center">Welcome to lin-cli 👋</h1>
+<h1 align="center">Welcome to @myywlc/lin-cli 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/npm/v/lin-cli.svg">
+  <a href="https://www.npmjs.com/package/@myywlc/lin-cli" target="_blank">
+    <img alt="Version" src="https://img.shields.io/npm/v/@myywlc/lin-cli.svg">
+  </a>
+  <a href="#" target="_blank">
+    <img alt="License: ISC" src="https://img.shields.io/badge/License-ISC-yellow.svg" />
+  </a>
 </p>
 
-> lin-cli
+> lin cli
 
 ## Install
 
