@@ -6,10 +6,6 @@ var _commander2 = _interopRequireDefault(_commander);
 
 var _constants = require('./utils/constants');
 
-var _index = require('./index');
-
-var _index2 = _interopRequireDefault(_index);
-
 var _chalk = require('chalk');
 
 var _chalk2 = _interopRequireDefault(_chalk);
@@ -23,6 +19,16 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
  *    - config
  *    - init
  */
+
+// 控制加载文件
+var apply = function apply(action) {
+  for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    args[_key - 1] = arguments[_key];
+  }
+
+  //babel-env
+  require('./' + action).apply(undefined, args);
+};
 
 var actionMap = {
   init: {
@@ -44,10 +50,10 @@ Object.keys(actionMap).forEach(function (action) {
     switch (action) {
       case 'config':
         //配置
-        _index2.default.apply(undefined, [action].concat(_toConsumableArray(process.argv.slice(3))));
+        apply.apply(undefined, [action].concat(_toConsumableArray(process.argv.slice(3))));
         break;
       case 'init':
-        _index2.default.apply(undefined, [action].concat(_toConsumableArray(process.argv.slice(3))));
+        apply.apply(undefined, [action].concat(_toConsumableArray(process.argv.slice(3))));
         break;
       default:
         break;
@@ -66,11 +72,14 @@ function help() {
 }
 
 _commander2.default.usage('<command> [options]');
+
 // lin -h
 _commander2.default.on('-h', help);
 _commander2.default.on('--help', help);
 // lin -V   VERSION 为 package.json 中的版本号
-_commander2.default.version(_constants.VERSION, '-V --version').parse(process.argv);
+_commander2.default.version(_constants.VERSION, '-v --version');
+
+_commander2.default.parse(process.argv);
 
 // lin 不带参数时
 if (!process.argv.slice(2).length) {

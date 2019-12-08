@@ -1,6 +1,5 @@
 import program from 'commander';
 import { VERSION } from './utils/constants';
-import apply from './index';
 import chalk from 'chalk';
 
 /**
@@ -8,6 +7,12 @@ import chalk from 'chalk';
  *    - config
  *    - init
  */
+
+// 控制加载文件
+let apply = (action, ...args) => {
+  //babel-env
+  require(`./${action}`)(...args);
+};
 
 let actionMap = {
   init: {
@@ -54,11 +59,14 @@ function help() {
 }
 
 program.usage('<command> [options]');
+
 // lin -h
 program.on('-h', help);
 program.on('--help', help);
 // lin -V   VERSION 为 package.json 中的版本号
-program.version(VERSION, '-V --version').parse(process.argv);
+program.version(VERSION, '-v --version');
+
+program.parse(process.argv);
 
 // lin 不带参数时
 if (!process.argv.slice(2).length) {
