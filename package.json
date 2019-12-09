@@ -1,6 +1,6 @@
 {
   "name": "@myywlc/lin-cli",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "lin cli",
   "bin": {
     "lin": "bin/lin.js"
