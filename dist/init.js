@@ -28,11 +28,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 let init = async (templateName, projectName) => {
   if (!templateName) {
-    console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('templateName 是必须的!'));
+    console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('template name 是必须的!'));
     return;
   }
   if (!projectName) {
-    console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('projectName 是必须的!'));
+    console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('project name 是必须的!'));
     return;
   }
   if (!_fs2.default.existsSync(projectName)) {
