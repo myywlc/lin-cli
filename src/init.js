@@ -36,9 +36,11 @@ let init = async (templateName, projectName) => {
             if (fs.existsSync(fileName)) {
               const data = fs.readFileSync(fileName).toString();
               let json = JSON.parse(data);
+
               json.name = projectName;
               json.author = answer.author;
               json.description = answer.description;
+
               fs.writeFileSync(fileName, JSON.stringify(json, null, '\t'), 'utf-8');
               console.log(symbol.success, chalk.green('项目初始化完成!'));
             }

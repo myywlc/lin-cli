@@ -51,9 +51,11 @@ let init = async (templateName, projectName) => {
         if (_fs2.default.existsSync(fileName)) {
           const data = _fs2.default.readFileSync(fileName).toString();
           let json = JSON.parse(data);
+
           json.name = projectName;
           json.author = answer.author;
           json.description = answer.description;
+
           _fs2.default.writeFileSync(fileName, JSON.stringify(json, null, '\t'), 'utf-8');
           console.log(_logSymbols2.default.success, _chalk2.default.green('项目初始化完成!'));
         }
