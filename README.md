@@ -4,7 +4,7 @@
     <img alt="Version" src="https://img.shields.io/npm/v/@myywlc/lin-cli.svg">
   </a>
   <a href="#" target="_blank">
-    <img alt="License: ISC" src="https://img.shields.io/badge/License-ISC-yellow.svg" />
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
 </p>
 
