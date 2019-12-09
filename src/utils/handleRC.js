@@ -46,11 +46,11 @@ export const set = async (key, value) => {
     opts = await readFile(config_path, 'utf8');
     opts = decode(opts);
     if (!key) {
-      console.log(chalk.red(chalk.bold('Error:')), chalk.red('key is required'));
+      console.log(chalk.red(chalk.bold('Error:')), chalk.red('key 是必须的!'));
       return;
     }
     if (!value) {
-      console.log(chalk.red(chalk.bold('Error:')), chalk.red('value is required'));
+      console.log(chalk.red(chalk.bold('Error:')), chalk.red('value 是必须的!'));
       return;
     }
     Object.assign(opts, { [key]: value });
