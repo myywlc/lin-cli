@@ -1,5 +1,5 @@
 import program from 'commander';
-import { VERSION } from './utils/constants';
+import { VERSION } from './utils/base';
 import chalk from 'chalk';
 
 /**

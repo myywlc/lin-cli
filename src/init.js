@@ -1,4 +1,4 @@
-import { downloadLocal } from './utils/get';
+import fetchGitRepository from './utils/fetchGitRepository';
 import ora from 'ora';
 import inquirer from 'inquirer';
 import fs from 'fs';
@@ -25,7 +25,7 @@ let init = async (templateName, projectName) => {
         //通过配置文件，获取模板信息
         let loading = ora('downloading template ...');
         loading.start();
-        downloadLocal(templateName, projectName).then(
+        fetchGitRepository(templateName, projectName).then(
           () => {
             loading.succeed();
             const fileName = `${projectName}/package.json`;

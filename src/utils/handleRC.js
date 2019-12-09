@@ -1,4 +1,4 @@
-import { RC, DEFAULTS } from './constants';
+import { config_path, default_config } from './base';
 import { decode, encode } from 'ini';
 import { promisify } from 'util';
 import chalk from 'chalk';
@@ -8,43 +8,42 @@ const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 
 const createLinRC = () => {
-  fs.writeFileSync(RC, `type=${DEFAULTS.type}
-registry=${DEFAULTS.registry}`);
+  fs.writeFileSync(config_path, `type=${default_config.type}
+registry=${default_config.registry}`);
 };
 
-//RC 是配置文件
-//DEFAULTS 是默认的配置
+//default_config 是默认的配置
 export const get = async key => {
-  const exit = await fs.existsSync(RC);
+  const exit = await fs.existsSync(config_path);
   let opts;
   if (exit) {
-    opts = await readFile(RC, 'utf8');
+    opts = await readFile(config_path, 'utf8');
     opts = decode(opts);
     return opts[key];
   } else {
     createLinRC();
-    return DEFAULTS;
+    return default_config;
   }
 };
 
 export const getAll = async () => {
-  const exit = await fs.existsSync(RC);
+  const exit = await fs.existsSync(config_path);
   let opts;
   if (exit) {
-    opts = await readFile(RC, 'utf8');
+    opts = await readFile(config_path, 'utf8');
     opts = decode(opts);
     return opts;
   } else {
     createLinRC();
-    return DEFAULTS;
+    return default_config;
   }
 };
 
 export const set = async (key, value) => {
-  const exit = await fs.existsSync(RC);
+  const exit = await fs.existsSync(config_path);
   let opts;
   if (exit) {
-    opts = await readFile(RC, 'utf8');
+    opts = await readFile(config_path, 'utf8');
     opts = decode(opts);
     if (!key) {
       console.log(chalk.red(chalk.bold('Error:')), chalk.red('key is required'));
@@ -56,18 +55,18 @@ export const set = async (key, value) => {
     }
     Object.assign(opts, { [key]: value });
   } else {
-    opts = Object.assign(DEFAULTS, { [key]: value });
+    opts = Object.assign(default_config, { [key]: value });
   }
-  await writeFile(RC, encode(opts), 'utf8');
+  await writeFile(config_path, encode(opts), 'utf8');
 };
 
 export const remove = async key => {
-  const exit = await fs.existsSync(RC);
+  const exit = await fs.existsSync(config_path);
   let opts;
   if (exit) {
-    opts = await readFile(RC, 'utf8');
+    opts = await readFile(config_path, 'utf8');
     opts = decode(opts);
     delete opts[key];
-    await writeFile(RC, encode(opts), 'utf8');
+    await writeFile(config_path, encode(opts), 'utf8');
   }
 };

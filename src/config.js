@@ -1,5 +1,4 @@
-// 管理 .linrc 文件 (当前用户目录下)
-import { get, set, getAll, remove } from './utils/rc';
+import { get, set, getAll, remove } from './utils/handleRC';
 
 let config = async (action, key, value) => {
   switch (action) {

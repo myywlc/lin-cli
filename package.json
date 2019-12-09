@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "lin cli",
   "bin": {
-    "lin": "./bin/www"
+    "lin": "bin/lin.js"
   },
   "scripts": {
     "compile": "babel src -d dist",
