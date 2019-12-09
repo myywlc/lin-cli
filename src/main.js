@@ -2,12 +2,6 @@ import program from 'commander';
 import { VERSION } from './utils/base';
 import chalk from 'chalk';
 
-/**
- * lin commands
- *    - config
- *    - init
- */
-
 // 控制加载文件
 let apply = (action, ...args) => {
   //babel-env
@@ -64,7 +58,7 @@ program.usage('<command> [options]');
 program.on('-h', help);
 program.on('--help', help);
 
-// lin -v   VERSION 为 package.json 中的版本号
+// lin -v
 program.version(VERSION, '-v --version');
 
 program.parse(process.argv);
