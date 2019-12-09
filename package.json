@@ -22,7 +22,11 @@
     "babel-cli": "^6.26.0",
     "babel-env": "^2.4.1"
   },
-  "keywords": ["lin", "cli", "myywlc"],
+  "keywords": [
+    "lin",
+    "cli",
+    "myywlc"
+  ],
   "author": "myywlc",
   "license": "MIT"
 }
