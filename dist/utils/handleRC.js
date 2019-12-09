@@ -63,11 +63,11 @@ const set = exports.set = async (key, value) => {
     opts = await readFile(_base.config_path, 'utf8');
     opts = (0, _ini.decode)(opts);
     if (!key) {
-      console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('key is required'));
+      console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('key 是必须的!'));
       return;
     }
     if (!value) {
-      console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('value is required'));
+      console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('value 是必须的!'));
       return;
     }
     Object.assign(opts, { [key]: value });

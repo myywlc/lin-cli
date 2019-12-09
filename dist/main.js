@@ -26,7 +26,7 @@ let apply = (action, ...args) => {
 
 let actionMap = {
   init: {
-    description: 'generate a new project from a template',
+    description: '从模板生成新项目',
     usages: ['lin init templateName projectName']
   },
   config: {
