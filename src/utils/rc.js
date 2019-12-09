@@ -7,6 +7,11 @@ import fs from 'fs';
 const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 
+const createLinRC = () => {
+  fs.writeFileSync(RC, `type=${DEFAULTS.type}
+registry=${DEFAULTS.registry}`);
+};
+
 //RC 是配置文件
 //DEFAULTS 是默认的配置
 export const get = async key => {
@@ -16,8 +21,10 @@ export const get = async key => {
     opts = await readFile(RC, 'utf8');
     opts = decode(opts);
     return opts[key];
+  } else {
+    createLinRC();
+    return DEFAULTS;
   }
-  return '';
 };
 
 export const getAll = async () => {
@@ -27,8 +34,10 @@ export const getAll = async () => {
     opts = await readFile(RC, 'utf8');
     opts = decode(opts);
     return opts;
+  } else {
+    createLinRC();
+    return DEFAULTS;
   }
-  return {};
 };
 
 export const set = async (key, value) => {
