@@ -8,8 +8,11 @@ const readFile = promisify(fs.readFile);
 const writeFile = promisify(fs.writeFile);
 
 const createLinRC = () => {
-  fs.writeFileSync(config_path, `type=${default_config.type}
-registry=${default_config.registry}`);
+  fs.writeFileSync(
+    config_path,
+    `type=${default_config.type}
+registry=${default_config.registry}`,
+  );
 };
 
 export const get = async key => {

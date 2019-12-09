@@ -29,7 +29,6 @@ const createLinRC = () => {
 registry=${_base.default_config.registry}`);
 };
 
-//default_config 是默认的配置
 const get = exports.get = async key => {
   const exit = await _fs2.default.existsSync(_base.config_path);
   let opts;

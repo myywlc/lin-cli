@@ -12,12 +12,6 @@ var _chalk2 = _interopRequireDefault(_chalk);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * lin commands
- *    - config
- *    - init
- */
-
 // 控制加载文件
 let apply = (action, ...args) => {
   //babel-env
@@ -71,7 +65,7 @@ _commander2.default.usage('<command> [options]');
 _commander2.default.on('-h', help);
 _commander2.default.on('--help', help);
 
-// lin -v   VERSION 为 package.json 中的版本号
+// lin -v
 _commander2.default.version(_base.VERSION, '-v --version');
 
 _commander2.default.parse(process.argv);
