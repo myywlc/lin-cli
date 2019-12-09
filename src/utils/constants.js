@@ -14,6 +14,6 @@ export const RC = `${HOME}/.linrc`;
 // https://api.github.com/${type}/${registry}/repos
 // 模板下载地址可配置
 export const DEFAULTS = {
-  registry: 'YvetteLau',
+  registry: 'myywlc',
   type: 'users',
 };
