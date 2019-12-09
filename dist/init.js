@@ -27,6 +27,14 @@ var _logSymbols2 = _interopRequireDefault(_logSymbols);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 let init = async (templateName, projectName) => {
+  if (!templateName) {
+    console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('templateName 是必须的!'));
+    return;
+  }
+  if (!projectName) {
+    console.log(_chalk2.default.red(_chalk2.default.bold('Error:')), _chalk2.default.red('projectName 是必须的!'));
+    return;
+  }
   if (!_fs2.default.existsSync(projectName)) {
     _inquirer2.default.prompt([{
       name: 'description',
