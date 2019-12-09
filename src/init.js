@@ -7,11 +7,11 @@ import symbol from 'log-symbols';
 
 let init = async (templateName, projectName) => {
   if (!templateName) {
-    console.log(chalk.red(chalk.bold('Error:')), chalk.red('templateName 是必须的!'));
+    console.log(chalk.red(chalk.bold('Error:')), chalk.red('template name 是必须的!'));
     return;
   }
   if (!projectName) {
-    console.log(chalk.red(chalk.bold('Error:')), chalk.red('projectName 是必须的!'));
+    console.log(chalk.red(chalk.bold('Error:')), chalk.red('project name 是必须的!'));
     return;
   }
   if (!fs.existsSync(projectName)) {
