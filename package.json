@@ -7,7 +7,7 @@
   },
   "scripts": {
     "compile": "babel src -d dist",
-    "watch": "npm run compile -- --watch",
+    "dev": "npm run compile -- --watch",
     "deploy": "npm run compile",
     "postdeploy": "npm publish --access=public"
   },
