@@ -8,7 +8,8 @@ async function loadActionFiles() {
   let files = glob.sync('dist/action/*.js');
   let promiseArr = [];
   files.forEach(item => {
-    const filePath = path.resolve(process.cwd(), item);
+    const filePath = path.resolve(`${__dirname}/../`, item);
+    console.log(filePath, 'filePath');
     promiseArr.push(import(filePath));
   });
   return await Promise.all(promiseArr);

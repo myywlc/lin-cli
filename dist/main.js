@@ -60,8 +60,9 @@ function _loadActionFiles() {
             files = _glob.default.sync('dist/action/*.js');
             promiseArr = [];
             files.forEach(function (item) {
-              var filePath = _path.default.resolve(process.cwd(), item);
+              var filePath = _path.default.resolve("".concat(__dirname, "/../"), item);
 
+              console.log(filePath, 'filePath');
               promiseArr.push(Promise.resolve().then(function () {
                 return (0, _interopRequireWildcard2.default)(require("".concat(filePath)));
               }));
