@@ -22,7 +22,7 @@ loadActionFiles().then(actionMap => {
       .description(configObj.cmd.description)
       .alias(configObj.cmd.alias) //别名
       .action(() => {
-        configObj.handle(configObj.name, ...process.argv.slice(3));
+        configObj.handle(...process.argv.slice(3));
       });
   });
 

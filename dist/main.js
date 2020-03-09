@@ -6,8 +6,6 @@ require("core-js/modules/es.symbol");
 
 require("core-js/modules/es.symbol.description");
 
-require("core-js/modules/es.array.concat");
-
 require("core-js/modules/es.array.for-each");
 
 require("core-js/modules/es.array.iterator");
@@ -86,7 +84,7 @@ loadActionFiles().then(function (actionMap) {
   actionMap.forEach(function (configObj) {
     _commander.default.command(configObj.name).description(configObj.cmd.description).alias(configObj.cmd.alias) //别名
     .action(function () {
-      configObj.handle.apply(configObj, [configObj.name].concat((0, _toConsumableArray2.default)(process.argv.slice(3))));
+      configObj.handle.apply(configObj, (0, _toConsumableArray2.default)(process.argv.slice(3)));
     });
   });
 
