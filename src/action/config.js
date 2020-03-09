@@ -1,6 +1,13 @@
-import { get, set, getAll, remove } from './utils/handleRC';
+import { get, set, getAll, remove } from '../utils/handleRC';
 
-let config = async (action, key, value) => {
+export const name = 'config';
+
+export const cmd = {
+  description: 'config .linrc',
+  usages: ['lin config set <k> <v>', 'lin config get <k>', 'lin config remove <k>'],
+};
+
+export const handle = async (action, key, value) => {
   switch (action) {
     case 'get':
       if (key) {
@@ -23,5 +30,3 @@ let config = async (action, key, value) => {
       break;
   }
 };
-
-module.exports = config;

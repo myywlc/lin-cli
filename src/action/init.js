@@ -1,11 +1,18 @@
-import fetchGitRepository from './utils/fetchGitRepository';
+import fetchGitRepository from '../utils/fetchGitRepository';
 import ora from 'ora';
 import inquirer from 'inquirer';
 import fs from 'fs';
 import chalk from 'chalk';
 import symbol from 'log-symbols';
 
-let init = async (templateName, projectName) => {
+export const name = 'init';
+
+export const cmd = {
+  description: '从模板生成新项目',
+  usages: ['lin init templateName projectName'],
+};
+
+export const handle = async (templateName, projectName) => {
   if (!templateName) {
     console.log(chalk.red(chalk.bold('Error:')), chalk.red('template name 是必须的!'));
     return;
@@ -54,5 +61,3 @@ let init = async (templateName, projectName) => {
     console.log(symbol.error, chalk.red('该项目已经存在!'));
   }
 };
-
-module.exports = init;

@@ -1,80 +1,124 @@
-'use strict';
+"use strict";
 
-var _commander = require('commander');
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
-var _commander2 = _interopRequireDefault(_commander);
+require("core-js/modules/es.symbol");
 
-var _base = require('./utils/base');
+require("core-js/modules/es.symbol.description");
 
-var _chalk = require('chalk');
+require("core-js/modules/es.array.concat");
 
-var _chalk2 = _interopRequireDefault(_chalk);
+require("core-js/modules/es.array.for-each");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+require("core-js/modules/es.array.iterator");
 
-// 控制加载文件
-let apply = (action, ...args) => {
-  //babel-env
-  require(`./${action}`)(...args);
-};
+require("core-js/modules/es.array.slice");
 
-let actionMap = {
-  init: {
-    description: '从模板生成新项目',
-    usages: ['lin init templateName projectName']
-  },
-  config: {
-    alias: 'cfg',
-    description: 'config .linrc',
-    usages: ['lin config set <k> <v>', 'lin config get <k>', 'lin config remove <k>']
-  }
-  //other commands
-};
+require("core-js/modules/es.function.name");
 
-// 添加 init / config 命令
-Object.keys(actionMap).forEach(action => {
-  _commander2.default.command(action).description(actionMap[action].description).alias(actionMap[action].alias) //别名
-  .action(() => {
-    switch (action) {
-      case 'config':
-        //配置
-        apply(action, ...process.argv.slice(3));
-        break;
-      case 'init':
-        apply(action, ...process.argv.slice(3));
-        break;
-      default:
-        break;
-    }
-  });
-});
+require("core-js/modules/es.object.to-string");
 
-function help() {
-  console.log('\r\nUsage:');
-  Object.keys(actionMap).forEach(action => {
-    actionMap[action].usages.forEach(usage => {
-      console.log('  - ' + usage);
+require("core-js/modules/es.promise");
+
+require("core-js/modules/es.string.iterator");
+
+require("core-js/modules/web.dom-collections.for-each");
+
+require("core-js/modules/web.dom-collections.iterator");
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _interopRequireWildcard2 = _interopRequireDefault(require("@babel/runtime/helpers/interopRequireWildcard"));
+
+require("regenerator-runtime/runtime");
+
+var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/toConsumableArray"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var _commander = _interopRequireDefault(require("commander"));
+
+var _base = require("./utils/base");
+
+var _chalk = _interopRequireDefault(require("chalk"));
+
+var _glob = _interopRequireDefault(require("glob"));
+
+var _path = _interopRequireDefault(require("path"));
+
+function loadAction() {
+  return _loadAction.apply(this, arguments);
+}
+
+function _loadAction() {
+  _loadAction = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+    var files, promiseArr;
+    return _regenerator.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            files = _glob.default.sync('dist/action/*.js');
+            promiseArr = [];
+            files.forEach(function (item) {
+              var filePath = _path.default.resolve(process.cwd(), item);
+
+              promiseArr.push(Promise.resolve().then(function () {
+                return (0, _interopRequireWildcard2.default)(require("".concat(filePath)));
+              }));
+            });
+            _context.next = 5;
+            return Promise.all(promiseArr);
+
+          case 5:
+            return _context.abrupt("return", _context.sent);
+
+          case 6:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+  return _loadAction.apply(this, arguments);
+}
+
+loadAction().then(function (actionMap) {
+  // console.log(actionMap, 'actionMap');
+  actionMap.forEach(function (configObj) {
+    _commander.default.command(configObj.name).description(configObj.cmd.description).alias(configObj.cmd.alias) //别名
+    .action(function () {
+      configObj.handle.apply(configObj, [configObj.name].concat((0, _toConsumableArray2.default)(process.argv.slice(3))));
     });
   });
-  console.log('\r');
-}
 
-_commander2.default.usage('<command> [options]');
+  function help() {
+    console.log('\r\nUsage:');
+    actionMap.forEach(function (configObj) {
+      configObj.cmd.usages.forEach(function (usage) {
+        console.log('  - ' + usage);
+      });
+    });
+    console.log('\r');
+  } // lin -h
 
-// lin -h
-_commander2.default.on('-h', help);
-_commander2.default.on('--help', help);
 
-// lin -v
-_commander2.default.version(_base.VERSION, '-v --version');
+  _commander.default.on('-h', help);
 
-_commander2.default.parse(process.argv);
+  _commander.default.on('--help', help);
 
-// lin 不带参数时
-if (!process.argv.slice(2).length) {
-  _commander2.default.outputHelp(make_green);
-}
+  _commander.default.usage('<command> [options]'); // lin -v
 
-function make_green(txt) {
-  return _chalk2.default.green(txt);
-}
+
+  _commander.default.version(_base.VERSION, '-v --version');
+
+  _commander.default.parse(process.argv); // lin 不带参数时
+
+
+  if (!process.argv.slice(2).length) {
+    _commander.default.outputHelp(make_green);
+  }
+
+  function make_green(txt) {
+    return _chalk.default.green(txt);
+  }
+});

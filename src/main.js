@@ -1,73 +1,59 @@
 import program from 'commander';
 import { VERSION } from './utils/base';
 import chalk from 'chalk';
+import glob from 'glob';
+import path from 'path';
 
-// 控制加载文件
-let apply = (action, ...args) => {
-  //babel-env
-  require(`./${action}`)(...args);
-};
-
-let actionMap = {
-  init: {
-    description: '从模板生成新项目',
-    usages: ['lin init templateName projectName'],
-  },
-  config: {
-    alias: 'cfg',
-    description: 'config .linrc',
-    usages: ['lin config set <k> <v>', 'lin config get <k>', 'lin config remove <k>'],
-  },
-  //other commands
-};
-
-// 添加 init / config 命令
-Object.keys(actionMap).forEach(action => {
-  program
-    .command(action)
-    .description(actionMap[action].description)
-    .alias(actionMap[action].alias) //别名
-    .action(() => {
-      switch (action) {
-        case 'config':
-          //配置
-          apply(action, ...process.argv.slice(3));
-          break;
-        case 'init':
-          apply(action, ...process.argv.slice(3));
-          break;
-        default:
-          break;
-      }
-    });
-});
-
-function help() {
-  console.log('\r\nUsage:');
-  Object.keys(actionMap).forEach(action => {
-    actionMap[action].usages.forEach(usage => {
-      console.log('  - ' + usage);
-    });
+async function loadAction() {
+  let files = glob.sync('dist/action/*.js');
+  let promiseArr = [];
+  files.forEach(item => {
+    const filePath = path.resolve(process.cwd(), item);
+    promiseArr.push(import(filePath));
   });
-  console.log('\r');
+  return await Promise.all(promiseArr);
 }
 
-program.usage('<command> [options]');
+loadAction().then(actionMap => {
+  // console.log(actionMap, 'actionMap');
 
-// lin -h
-program.on('-h', help);
-program.on('--help', help);
+  actionMap.forEach(configObj => {
+    program
+      .command(configObj.name)
+      .description(configObj.cmd.description)
+      .alias(configObj.cmd.alias) //别名
+      .action(() => {
+        configObj.handle(configObj.name, ...process.argv.slice(3));
+      });
+  });
 
-// lin -v
-program.version(VERSION, '-v --version');
+  function help() {
+    console.log('\r\nUsage:');
+    actionMap.forEach(configObj => {
+      configObj.cmd.usages.forEach(usage => {
+        console.log('  - ' + usage);
+      });
+    });
+    console.log('\r');
+  }
 
-program.parse(process.argv);
+  // lin -h
+  program.on('-h', help);
+  program.on('--help', help);
 
-// lin 不带参数时
-if (!process.argv.slice(2).length) {
-  program.outputHelp(make_green);
-}
+  program.usage('<command> [options]');
 
-function make_green(txt) {
-  return chalk.green(txt);
-}
+  // lin -v
+  program.version(VERSION, '-v --version');
+
+  program.parse(process.argv);
+
+  // lin 不带参数时
+  if (!process.argv.slice(2).length) {
+    program.outputHelp(make_green);
+  }
+
+  function make_green(txt) {
+    return chalk.green(txt);
+  }
+});
