@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import glob from 'glob';
 import path from 'path';
 
-async function loadAction() {
+async function loadActionFiles() {
   let files = glob.sync('dist/action/*.js');
   let promiseArr = [];
   files.forEach(item => {
@@ -14,8 +14,7 @@ async function loadAction() {
   return await Promise.all(promiseArr);
 }
 
-loadAction().then(actionMap => {
-  // console.log(actionMap, 'actionMap');
+loadActionFiles().then(actionMap => {
 
   actionMap.forEach(configObj => {
     program

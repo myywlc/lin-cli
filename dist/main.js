@@ -46,12 +46,12 @@ var _glob = _interopRequireDefault(require("glob"));
 
 var _path = _interopRequireDefault(require("path"));
 
-function loadAction() {
-  return _loadAction.apply(this, arguments);
+function loadActionFiles() {
+  return _loadActionFiles.apply(this, arguments);
 }
 
-function _loadAction() {
-  _loadAction = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+function _loadActionFiles() {
+  _loadActionFiles = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
     var files, promiseArr;
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
@@ -79,11 +79,10 @@ function _loadAction() {
       }
     }, _callee);
   }));
-  return _loadAction.apply(this, arguments);
+  return _loadActionFiles.apply(this, arguments);
 }
 
-loadAction().then(function (actionMap) {
-  // console.log(actionMap, 'actionMap');
+loadActionFiles().then(function (actionMap) {
   actionMap.forEach(function (configObj) {
     _commander.default.command(configObj.name).description(configObj.cmd.description).alias(configObj.cmd.alias) //别名
     .action(function () {
