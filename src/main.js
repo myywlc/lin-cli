@@ -9,7 +9,6 @@ async function loadActionFiles() {
   let promiseArr = [];
   files.forEach(item => {
     const filePath = path.resolve(`${__dirname}/../`, item);
-    console.log(filePath, 'filePath');
     promiseArr.push(import(filePath));
   });
   return await Promise.all(promiseArr);
