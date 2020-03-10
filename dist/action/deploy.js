@@ -6,6 +6,8 @@ require("core-js/modules/es.array.concat");
 
 require("core-js/modules/es.array.find");
 
+require("core-js/modules/es.array.for-each");
+
 require("core-js/modules/es.array.map");
 
 require("core-js/modules/es.function.name");
@@ -13,6 +15,8 @@ require("core-js/modules/es.function.name");
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
+
+require("core-js/modules/web.dom-collections.for-each");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -97,7 +101,7 @@ var checkDeployExists = function checkDeployExists() {
   writeConfigFile();
 };
 
-var configTemplate = "const config = {\n  privateKey: '', // \u672C\u5730\u79C1\u94A5\u5730\u5740\uFF0C\u4F4D\u7F6E\u4E00\u822C\u5728C:/Users/xxx/.ssh/id_rsa\uFF0C\u975E\u5FC5\u586B\uFF0C\u6709\u79C1\u94A5\u5219\u914D\u7F6E\n  passphrase: '', // \u672C\u5730\u79C1\u94A5\u5BC6\u7801\uFF0C\u975E\u5FC5\u586B\uFF0C\u6709\u79C1\u94A5\u5219\u914D\u7F6E\n  projectName: '', // \u9879\u76EE\u540D\u79F0\n  // \u6839\u636E\u9700\u8981\u8FDB\u884C\u914D\u7F6E\uFF0C\u5982\u53EA\u9700\u90E8\u7F72prod\u7EBF\u4E0A\u73AF\u5883\uFF0C\u8BF7\u5220\u9664dev\u6D4B\u8BD5\u73AF\u5883\u914D\u7F6E\uFF0C\u53CD\u4E4B\u4EA6\u7136\uFF0C\u652F\u6301\u591A\u73AF\u5883\u90E8\u7F72\n  dev: {\n    // \u6D4B\u8BD5\u73AF\u5883\n    name: '\u6D4B\u8BD5\u73AF\u5883',\n    script: 'npm run build', // \u6D4B\u8BD5\u73AF\u5883\u6253\u5305\u811A\u672C\n    host: '', // \u6D4B\u8BD5\u670D\u52A1\u5668\u5730\u5740\n    port: 22, // ssh port\uFF0C\u4E00\u822C\u9ED8\u8BA422\n    username: '', // \u767B\u5F55\u670D\u52A1\u5668\u7528\u6237\u540D\n    password: '', // \u767B\u5F55\u670D\u52A1\u5668\u5BC6\u7801\n    distPath: 'dist', // \u672C\u5730\u6253\u5305dist\u76EE\u5F55\n    webDir: '', // // \u6D4B\u8BD5\u73AF\u5883\u670D\u52A1\u5668\u5730\u5740\n  },\n  prod: {\n    // \u7EBF\u4E0A\u73AF\u5883\n    name: '\u7EBF\u4E0A\u73AF\u5883',\n    script: 'npm run build', // \u7EBF\u4E0A\u73AF\u5883\u6253\u5305\u811A\u672C\n    host: '', // \u7EBF\u4E0A\u670D\u52A1\u5668\u5730\u5740\n    port: 22, // ssh port\uFF0C\u4E00\u822C\u9ED8\u8BA422\n    username: '', // \u767B\u5F55\u670D\u52A1\u5668\u7528\u6237\u540D\n    password: '', // \u767B\u5F55\u670D\u52A1\u5668\u5BC6\u7801\n    distPath: 'dist', // \u672C\u5730\u6253\u5305dist\u76EE\u5F55\n    webDir: '', // \u7EBF\u4E0A\u73AF\u5883web\u76EE\u5F55\n  },\n  // \u518D\u8FD8\u6709\u591A\u4F59\u7684\u73AF\u5883\u6309\u7167\u8FD9\u4E2A\u683C\u5F0F\u5199\u5373\u53EF\n};\n\nmodule.exports = { config };\n";
+var configTemplate = "const config = {\n  privateKey: '', // \u672C\u5730\u79C1\u94A5\u5730\u5740\uFF0C\u4F4D\u7F6E\u4E00\u822C\u5728C:/Users/xxx/.ssh/id_rsa\uFF0C\u975E\u5FC5\u586B\uFF0C\u6709\u79C1\u94A5\u5219\u914D\u7F6E\n  passphrase: '', // \u672C\u5730\u79C1\u94A5\u5BC6\u7801\uFF0C\u975E\u5FC5\u586B\uFF0C\u6709\u79C1\u94A5\u5219\u914D\u7F6E\n  projectName: '', // \u9879\u76EE\u540D\u79F0\n  // \u6839\u636E\u9700\u8981\u8FDB\u884C\u914D\u7F6E\uFF0C\u5982\u53EA\u9700\u90E8\u7F72prod\u7EBF\u4E0A\u73AF\u5883\uFF0C\u8BF7\u5220\u9664dev\u6D4B\u8BD5\u73AF\u5883\u914D\u7F6E\uFF0C\u53CD\u4E4B\u4EA6\u7136\uFF0C\u652F\u6301\u591A\u73AF\u5883\u90E8\u7F72\n  dev: {\n    // \u6D4B\u8BD5\u73AF\u5883\n    name: '\u6D4B\u8BD5\u73AF\u5883',\n    script: 'npm run build', // \u6D4B\u8BD5\u73AF\u5883\u6253\u5305\u811A\u672C\n    host: '', // \u6D4B\u8BD5\u670D\u52A1\u5668\u5730\u5740\n    port: 22, // ssh port\uFF0C\u4E00\u822C\u9ED8\u8BA422\n    username: '', // \u767B\u5F55\u670D\u52A1\u5668\u7528\u6237\u540D\n    password: '', // \u767B\u5F55\u670D\u52A1\u5668\u5BC6\u7801\n    distPath: 'dist', // \u672C\u5730\u6253\u5305dist\u76EE\u5F55\n    // distPath: {\n    //   files: ['package.json', 'yarn.lock', '.gitignore', '.prettierrc.js', 'babel.config.js', 'README.md'],\n    //   directory: ['dist', 'static']\n    // },\n    webDir: '', // \u6D4B\u8BD5\u73AF\u5883\u670D\u52A1\u5668\u5730\u5740\n  },\n  prod: {\n    // \u7EBF\u4E0A\u73AF\u5883\n    name: '\u7EBF\u4E0A\u73AF\u5883',\n    script: 'npm run build', // \u7EBF\u4E0A\u73AF\u5883\u6253\u5305\u811A\u672C\n    host: '', // \u7EBF\u4E0A\u670D\u52A1\u5668\u5730\u5740\n    port: 22, // ssh port\uFF0C\u4E00\u822C\u9ED8\u8BA422\n    username: '', // \u767B\u5F55\u670D\u52A1\u5668\u7528\u6237\u540D\n    password: '', // \u767B\u5F55\u670D\u52A1\u5668\u5BC6\u7801\n    distPath: 'dist', // \u672C\u5730\u6253\u5305dist\u76EE\u5F55\n    // distPath: {\n    //   files: ['package.json', 'yarn.lock', '.gitignore', '.prettierrc.js', 'babel.config.js', 'README.md'],\n    //   directory: ['dist', 'static']\n    // },\n    webDir: '', // \u7EBF\u4E0A\u73AF\u5883web\u76EE\u5F55\n  },\n};\n\nmodule.exports = { config };\n";
 
 var writeConfigFile = function writeConfigFile() {
   var spinner = (0, _ora.default)('开始生成部署模板');
@@ -198,7 +202,8 @@ function execBuild(script) {
 
 function startZip(distPath) {
   return new Promise(function (resolve, reject) {
-    distPath = _path.default.resolve(process.cwd(), distPath);
+    var output = _fs.default.createWriteStream("".concat(process.cwd(), "/dist.zip"));
+
     console.log('（2）打包成zip');
     var archive = (0, _archiver.default)('zip', {
       zlib: {
@@ -207,9 +212,6 @@ function startZip(distPath) {
     }).on('error', function (err) {
       throw err;
     });
-
-    var output = _fs.default.createWriteStream("".concat(process.cwd(), "/dist.zip"));
-
     output.on('close', function (err) {
       if (err) {
         (0, _utils_deploy.errorLog)("  \u5173\u95EDarchiver\u5F02\u5E38 ".concat(err));
@@ -221,7 +223,23 @@ function startZip(distPath) {
       resolve();
     });
     archive.pipe(output);
-    archive.directory(distPath, '/dist'); // archive.directory(`${process.cwd()}/package.json`, '/');
+
+    if (distPath instanceof Object) {
+      var _distPath = distPath,
+          files = _distPath.files,
+          directory = _distPath.directory;
+      files.forEach(function (item) {
+        archive.file("".concat(process.cwd(), "/").concat(item), {
+          name: item
+        });
+      });
+      directory.forEach(function (item) {
+        archive.directory("".concat(process.cwd(), "/").concat(item), "/".concat(item));
+      });
+    } else {
+      distPath = _path.default.resolve(process.cwd(), distPath);
+      archive.directory(distPath, '/');
+    }
 
     archive.finalize();
   });
@@ -235,12 +253,12 @@ function connectSSH(_x3) {
 
 function _connectSSH() {
   _connectSSH = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee3(config) {
-    var host, port, username, password, privateKey, passphrase, distPath, sshConfig;
+    var host, port, username, password, privateKey, passphrase, sshConfig;
     return _regenerator.default.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            host = config.host, port = config.port, username = config.username, password = config.password, privateKey = config.privateKey, passphrase = config.passphrase, distPath = config.distPath;
+            host = config.host, port = config.port, username = config.username, password = config.password, privateKey = config.privateKey, passphrase = config.passphrase;
             sshConfig = {
               host: host,
               port: port,

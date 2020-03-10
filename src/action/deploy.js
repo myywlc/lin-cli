@@ -55,7 +55,11 @@ const configTemplate = `const config = {
     username: '', // 登录服务器用户名
     password: '', // 登录服务器密码
     distPath: 'dist', // 本地打包dist目录
-    webDir: '', // // 测试环境服务器地址
+    // distPath: {
+    //   files: ['package.json', 'yarn.lock', '.gitignore', '.prettierrc.js', 'babel.config.js', 'README.md'],
+    //   directory: ['dist', 'static']
+    // },
+    webDir: '', // 测试环境服务器地址
   },
   prod: {
     // 线上环境
@@ -66,9 +70,12 @@ const configTemplate = `const config = {
     username: '', // 登录服务器用户名
     password: '', // 登录服务器密码
     distPath: 'dist', // 本地打包dist目录
+    // distPath: {
+    //   files: ['package.json', 'yarn.lock', '.gitignore', '.prettierrc.js', 'babel.config.js', 'README.md'],
+    //   directory: ['dist', 'static']
+    // },
     webDir: '', // 线上环境web目录
   },
-  // 再还有多余的环境按照这个格式写即可
 };
 
 module.exports = { config };
@@ -128,14 +135,13 @@ function execBuild(script) {
 // 第二部，打包zip
 function startZip(distPath) {
   return new Promise((resolve, reject) => {
-    distPath = path.resolve(process.cwd(), distPath);
+    const output = fs.createWriteStream(`${process.cwd()}/dist.zip`);
     console.log('（2）打包成zip');
     const archive = archiver('zip', {
       zlib: { level: 9 },
     }).on('error', err => {
       throw err;
     });
-    const output = fs.createWriteStream(`${process.cwd()}/dist.zip`);
     output.on('close', err => {
       if (err) {
         errorLog(`  关闭archiver异常 ${err}`);
@@ -146,15 +152,26 @@ function startZip(distPath) {
       resolve();
     });
     archive.pipe(output);
-    archive.directory(distPath, '/dist');
-    // archive.directory(`${process.cwd()}/package.json`, '/');
+
+    if (distPath instanceof Object) {
+      const { files, directory } = distPath;
+      files.forEach((item) => {
+        archive.file(`${process.cwd()}/${item}`, { name: item });
+      });
+      directory.forEach((item) => {
+        archive.directory(`${process.cwd()}/${item}`, `/${item}`);
+      });
+    } else {
+      distPath = path.resolve(process.cwd(), distPath);
+      archive.directory(distPath, '/');
+    }
     archive.finalize();
   });
 }
 
 // 第三步，连接SSH
 async function connectSSH(config) {
-  const { host, port, username, password, privateKey, passphrase, distPath } = config;
+  const { host, port, username, password, privateKey, passphrase } = config;
   const sshConfig = {
     host,
     port,
