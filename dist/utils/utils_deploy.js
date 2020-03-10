@@ -98,7 +98,7 @@ function checkConfigScheme(configKey, configObj, privateKey) {
   var deploySchemaKeys = null;
   var configKeys = Object.keys(configObj);
   var neededKeys = [];
-  var unConfigedKeys = [];
+  var unConfigKeys = [];
   var configValid = true;
 
   if (privateKey) {
@@ -120,7 +120,7 @@ function checkConfigScheme(configKey, configObj, privateKey) {
       }
 
       if (configObj[key] === '') {
-        unConfigedKeys.push(key);
+        unConfigKeys.push(key);
       }
     }
   } catch (err) {
@@ -143,8 +143,8 @@ function checkConfigScheme(configKey, configObj, privateKey) {
     configValid = false;
   }
 
-  if (unConfigedKeys.length > 0) {
-    errorLog("".concat(configKey, "\u4E2D\u7684").concat(unConfigedKeys.join(', '), "\u6682\u672A\u914D\u7F6E\uFF0C\u8BF7\u8BBE\u7F6E\u8BE5\u914D\u7F6E\u9879"));
+  if (unConfigKeys.length > 0) {
+    errorLog("".concat(configKey, "\u4E2D\u7684").concat(unConfigKeys.join(', '), "\u6682\u672A\u914D\u7F6E\uFF0C\u8BF7\u8BBE\u7F6E\u8BE5\u914D\u7F6E\u9879"));
     configValid = false;
   }
 
@@ -158,14 +158,14 @@ function checkDeployConfig(_x) {
 
 function _checkDeployConfig() {
   _checkDeployConfig = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee(deployConfigPath) {
-    var config, privateKey, passphrase, projectName, keys, configs, _i, _keys, key;
+    var _ref, config, privateKey, passphrase, projectName, keys, configs, _i, _keys, key;
 
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             if (!_fs.default.existsSync(deployConfigPath)) {
-              _context.next = 22;
+              _context.next = 23;
               break;
             }
 
@@ -175,52 +175,53 @@ function _checkDeployConfig() {
             });
 
           case 3:
-            config = _context.sent;
+            _ref = _context.sent;
+            config = _ref.config;
             privateKey = config.privateKey, passphrase = config.passphrase, projectName = config.projectName;
             keys = Object.keys(config);
             configs = [];
             _i = 0, _keys = keys;
 
-          case 8:
+          case 9:
             if (!(_i < _keys.length)) {
-              _context.next = 21;
+              _context.next = 22;
               break;
             }
 
             key = _keys[_i];
 
             if (!(config[key] instanceof Object)) {
-              _context.next = 18;
+              _context.next = 19;
               break;
             }
 
             if (checkConfigScheme(key, config[key], privateKey)) {
-              _context.next = 13;
+              _context.next = 14;
               break;
             }
 
             return _context.abrupt("return", false);
 
-          case 13:
+          case 14:
             config[key].command = key;
             config[key].privateKey = privateKey;
             config[key].passphrase = passphrase;
             config[key].projectName = projectName;
             configs.push(config[key]);
 
-          case 18:
+          case 19:
             _i++;
-            _context.next = 8;
+            _context.next = 9;
             break;
 
-          case 21:
+          case 22:
             return _context.abrupt("return", configs);
 
-          case 22:
-            infoLog("\u7F3A\u5C11\u90E8\u7F72\u76F8\u5173\u7684\u914D\u7F6E\uFF0C\u8BF7\u8FD0\u884C".concat(underlineLog('deploy init'), "\u4E0B\u8F7D\u90E8\u7F72\u914D\u7F6E"));
+          case 23:
+            infoLog("\u7F3A\u5C11\u90E8\u7F72\u76F8\u5173\u7684\u914D\u7F6E\uFF0C\u8BF7\u8FD0\u884C".concat(underlineLog('lin deploy init'), "\u521B\u5EFA\u90E8\u7F72\u914D\u7F6E\u6587\u4EF6"));
             return _context.abrupt("return", false);
 
-          case 24:
+          case 25:
           case "end":
             return _context.stop();
         }

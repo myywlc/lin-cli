@@ -2,23 +2,17 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
-require("core-js/modules/es.symbol");
-
-require("core-js/modules/es.symbol.description");
-
 require("core-js/modules/es.array.concat");
 
-require("core-js/modules/es.array.for-each");
+require("core-js/modules/es.array.find");
 
-require("core-js/modules/es.array.join");
+require("core-js/modules/es.array.map");
 
 require("core-js/modules/es.function.name");
 
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
-
-require("core-js/modules/web.dom-collections.for-each");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -43,52 +37,40 @@ var _archiver = _interopRequireDefault(require("archiver"));
 
 var _nodeSsh = _interopRequireDefault(require("node-ssh"));
 
-var _downloadGitRepo = _interopRequireDefault(require("download-git-repo"));
-
 var _child_process = _interopRequireDefault(require("child_process"));
-
-var _commander = _interopRequireDefault(require("commander"));
 
 var _utils_deploy = require("../utils/utils_deploy");
 
-var deployPath = _path.default.join(process.cwd(), './deploy');
-
-var deployConfigPath = "".concat(deployPath, "/deploy.config.js");
-var projectDir = process.cwd();
-var deployGit = 'dadaiwei/fe-deploy-cli-template';
-var tmp = 'deploy';
+var deployConfigPath = "".concat(process.cwd(), "/deploy.config.js");
 var ssh = new _nodeSsh.default(); // 生成ssh实例
 
 var name = 'deploy';
 exports.name = name;
 var cmd = {
   description: 'deploy package',
-  usages: ['lin deploy init', 'lin deploy this']
+  usages: ['lin deploy init', 'lin deploy']
 };
 exports.cmd = cmd;
 
 var handle = /*#__PURE__*/function () {
-  var _ref = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee(key, value) {
+  var _ref = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee(key) {
     return _regenerator.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.t0 = key;
-            _context.next = _context.t0 === 'init' ? 3 : _context.t0 === 'this' ? 5 : 7;
+            _context.next = _context.t0 === 'init' ? 3 : 5;
             break;
 
           case 3:
             checkDeployExists();
-            return _context.abrupt("break", 8);
+            return _context.abrupt("break", 7);
 
           case 5:
             handleDeploy();
-            return _context.abrupt("break", 8);
+            return _context.abrupt("break", 7);
 
           case 7:
-            return _context.abrupt("break", 8);
-
-          case 8:
           case "end":
             return _context.stop();
         }
@@ -96,7 +78,7 @@ var handle = /*#__PURE__*/function () {
     }, _callee);
   }));
 
-  return function handle(_x, _x2) {
+  return function handle(_x) {
     return _ref.apply(this, arguments);
   };
 }(); // ===================== init =========================
@@ -106,39 +88,40 @@ var handle = /*#__PURE__*/function () {
 exports.handle = handle;
 
 var checkDeployExists = function checkDeployExists() {
-  if (_fs.default.existsSync(deployPath) && _fs.default.existsSync(deployConfigPath)) {
-    (0, _utils_deploy.infoLog)('deploy目录下的deploy.config.js配置文件已经存在，请勿重新下载');
+  if (_fs.default.existsSync(deployConfigPath)) {
+    (0, _utils_deploy.infoLog)('根目录下的deploy.config.js配置文件已经存在!');
     process.exit(1);
     return;
   }
 
-  downloadAndGenerate(deployGit);
-}; // 下载部署脚本配置
+  writeConfigFile();
+};
 
+var configTemplate = "const config = {\n  privateKey: '', // \u672C\u5730\u79C1\u94A5\u5730\u5740\uFF0C\u4F4D\u7F6E\u4E00\u822C\u5728C:/Users/xxx/.ssh/id_rsa\uFF0C\u975E\u5FC5\u586B\uFF0C\u6709\u79C1\u94A5\u5219\u914D\u7F6E\n  passphrase: '', // \u672C\u5730\u79C1\u94A5\u5BC6\u7801\uFF0C\u975E\u5FC5\u586B\uFF0C\u6709\u79C1\u94A5\u5219\u914D\u7F6E\n  projectName: '', // \u9879\u76EE\u540D\u79F0\n  // \u6839\u636E\u9700\u8981\u8FDB\u884C\u914D\u7F6E\uFF0C\u5982\u53EA\u9700\u90E8\u7F72prod\u7EBF\u4E0A\u73AF\u5883\uFF0C\u8BF7\u5220\u9664dev\u6D4B\u8BD5\u73AF\u5883\u914D\u7F6E\uFF0C\u53CD\u4E4B\u4EA6\u7136\uFF0C\u652F\u6301\u591A\u73AF\u5883\u90E8\u7F72\n  dev: {\n    // \u6D4B\u8BD5\u73AF\u5883\n    name: '\u6D4B\u8BD5\u73AF\u5883',\n    script: 'npm run build', // \u6D4B\u8BD5\u73AF\u5883\u6253\u5305\u811A\u672C\n    host: '', // \u6D4B\u8BD5\u670D\u52A1\u5668\u5730\u5740\n    port: 22, // ssh port\uFF0C\u4E00\u822C\u9ED8\u8BA422\n    username: '', // \u767B\u5F55\u670D\u52A1\u5668\u7528\u6237\u540D\n    password: '', // \u767B\u5F55\u670D\u52A1\u5668\u5BC6\u7801\n    distPath: 'dist', // \u672C\u5730\u6253\u5305dist\u76EE\u5F55\n    webDir: '', // // \u6D4B\u8BD5\u73AF\u5883\u670D\u52A1\u5668\u5730\u5740\n  },\n  prod: {\n    // \u7EBF\u4E0A\u73AF\u5883\n    name: '\u7EBF\u4E0A\u73AF\u5883',\n    script: 'npm run build', // \u7EBF\u4E0A\u73AF\u5883\u6253\u5305\u811A\u672C\n    host: '', // \u7EBF\u4E0A\u670D\u52A1\u5668\u5730\u5740\n    port: 22, // ssh port\uFF0C\u4E00\u822C\u9ED8\u8BA422\n    username: '', // \u767B\u5F55\u670D\u52A1\u5668\u7528\u6237\u540D\n    password: '', // \u767B\u5F55\u670D\u52A1\u5668\u5BC6\u7801\n    distPath: 'dist', // \u672C\u5730\u6253\u5305dist\u76EE\u5F55\n    webDir: '', // \u7EBF\u4E0A\u73AF\u5883web\u76EE\u5F55\n  },\n  // \u518D\u8FD8\u6709\u591A\u4F59\u7684\u73AF\u5883\u6309\u7167\u8FD9\u4E2A\u683C\u5F0F\u5199\u5373\u53EF\n};\n\nmodule.exports = { config };\n";
 
-var downloadAndGenerate = function downloadAndGenerate(templateUrl) {
+var writeConfigFile = function writeConfigFile() {
   var spinner = (0, _ora.default)('开始生成部署模板');
   spinner.start();
-  (0, _downloadGitRepo.default)(templateUrl, tmp, {
-    clone: false
+
+  _fs.default.writeFile(deployConfigPath, configTemplate, {
+    encoding: 'utf8'
   }, function (err) {
     if (err) {
-      console.log();
       (0, _utils_deploy.errorLog)(err);
       process.exit(1);
     }
 
     spinner.stop();
-    (0, _utils_deploy.successLog)('模板下载成功，模板位置：deploy/deploy.config.js');
-    (0, _utils_deploy.infoLog)('请配置deploy目录下的deploy.config.js配置文件');
-    console.log('注意：请删除不必要的环境配置（如只需线上环境，请删除dev测试环境配置）');
+    (0, _utils_deploy.successLog)('配置模板创建成功');
+    (0, _utils_deploy.infoLog)('请配置根目录下的deploy.config.js配置文件');
+    (0, _utils_deploy.errorLog)('注意：请在.gitignore配置忽略deploy.config.js文件,避免关键信息泄露');
     process.exit(0);
   });
 }; // ===================== deploy =========================
 // 部署流程入口
 
 
-function runDeploy(_x3) {
+function runDeploy(_x2) {
   return _runDeploy.apply(this, arguments);
 } // 第一步，执行打包脚本
 
@@ -173,7 +156,7 @@ function _runDeploy() {
             return deleteLocalZip();
 
           case 13:
-            (0, _utils_deploy.successLog)("\n \u606D\u559C\u60A8\uFF0C".concat((0, _utils_deploy.underlineLog)(projectName), "\u9879\u76EE").concat((0, _utils_deploy.underlineLog)(name), "\u90E8\u7F72\u6210\u529F\u4E86^_^\n"));
+            (0, _utils_deploy.successLog)(" ".concat((0, _utils_deploy.underlineLog)(projectName), "\u9879\u76EE").concat((0, _utils_deploy.underlineLog)(name), "\u90E8\u7F72\u6210\u529F \n"));
             process.exit(0);
             _context2.next = 21;
             break;
@@ -199,10 +182,9 @@ function execBuild(script) {
     console.log("\n\uFF081\uFF09".concat(script));
     var spinner = (0, _ora.default)('正在打包中');
     spinner.start();
-    console.log();
 
     _child_process.default.execSync(script, {
-      cwd: projectDir
+      cwd: process.cwd()
     });
 
     spinner.stop();
@@ -216,7 +198,7 @@ function execBuild(script) {
 
 function startZip(distPath) {
   return new Promise(function (resolve, reject) {
-    distPath = _path.default.resolve(projectDir, distPath);
+    distPath = _path.default.resolve(process.cwd(), distPath);
     console.log('（2）打包成zip');
     var archive = (0, _archiver.default)('zip', {
       zlib: {
@@ -226,7 +208,7 @@ function startZip(distPath) {
       throw err;
     });
 
-    var output = _fs.default.createWriteStream("".concat(projectDir, "/dist.zip"));
+    var output = _fs.default.createWriteStream("".concat(process.cwd(), "/dist.zip"));
 
     output.on('close', function (err) {
       if (err) {
@@ -239,13 +221,14 @@ function startZip(distPath) {
       resolve();
     });
     archive.pipe(output);
-    archive.directory(distPath, '/');
+    archive.directory(distPath, '/dist'); // archive.directory(`${process.cwd()}/package.json`, '/');
+
     archive.finalize();
   });
 } // 第三步，连接SSH
 
 
-function connectSSH(_x4) {
+function connectSSH(_x3) {
   return _connectSSH.apply(this, arguments);
 } // 第四部，上传zip包
 
@@ -292,7 +275,7 @@ function _connectSSH() {
   return _connectSSH.apply(this, arguments);
 }
 
-function uploadFile(_x5) {
+function uploadFile(_x4) {
   return _uploadFile.apply(this, arguments);
 } // 运行命令
 
@@ -306,7 +289,7 @@ function _uploadFile() {
             _context4.prev = 0;
             console.log("\uFF084\uFF09\u4E0A\u4F20zip\u81F3\u76EE\u5F55".concat((0, _utils_deploy.underlineLog)(webDir)));
             _context4.next = 4;
-            return ssh.putFile("".concat(projectDir, "/dist.zip"), "".concat(webDir, "/dist.zip"));
+            return ssh.putFile("".concat(process.cwd(), "/dist.zip"), "".concat(webDir, "/dist.zip"));
 
           case 4:
             (0, _utils_deploy.successLog)('  zip包上传成功');
@@ -329,7 +312,7 @@ function _uploadFile() {
   return _uploadFile.apply(this, arguments);
 }
 
-function runCommand(_x6, _x7) {
+function runCommand(_x5, _x6) {
   return _runCommand.apply(this, arguments);
 } // 第五步，解压zip包
 
@@ -355,7 +338,7 @@ function _runCommand() {
   return _runCommand.apply(this, arguments);
 }
 
-function unzipFile(_x8) {
+function unzipFile(_x7) {
   return _unzipFile.apply(this, arguments);
 } // 第六步，删除本地dist.zip包
 
@@ -409,7 +392,7 @@ function _deleteLocalZip() {
             return _context7.abrupt("return", new Promise(function (resolve, reject) {
               console.log('（6）开始删除本地zip包');
 
-              _fs.default.unlink("".concat(projectDir, "/dist.zip"), function (err) {
+              _fs.default.unlink("".concat(process.cwd(), "/dist.zip"), function (err) {
                 if (err) {
                   (0, _utils_deploy.errorLog)("  \u672C\u5730zip\u5305\u5220\u9664\u5931\u8D25 ".concat(err), err);
                   reject(err);
@@ -432,35 +415,62 @@ function _deleteLocalZip() {
 }
 
 function handleDeploy() {
-  // 检测部署配置是否合理
-  var deployConfigs = (0, _utils_deploy.checkDeployConfig)(deployConfigPath);
+  return _handleDeploy.apply(this, arguments);
+}
 
-  if (!deployConfigs) {
-    process.exit(1);
-  } // 注册部署命令
+function _handleDeploy() {
+  _handleDeploy = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee8() {
+    var deployConfigs, choices;
+    return _regenerator.default.wrap(function _callee8$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+            _context8.next = 2;
+            return (0, _utils_deploy.checkDeployConfig)(deployConfigPath);
 
+          case 2:
+            deployConfigs = _context8.sent;
 
-  deployConfigs.forEach(function (config) {
-    var command = config.command,
-        projectName = config.projectName,
-        name = config.name;
+            if (!deployConfigs) {
+              process.exit(1);
+            }
 
-    _commander.default.command("".concat(command)).description("".concat((0, _utils_deploy.underlineLog)(projectName), "\u9879\u76EE").concat((0, _utils_deploy.underlineLog)(name), "\u90E8\u7F72")).action(function () {
-      _inquirer.default.prompt([{
-        type: 'confirm',
-        message: "".concat((0, _utils_deploy.underlineLog)(projectName), "\u9879\u76EE\u662F\u5426\u90E8\u7F72\u5230").concat((0, _utils_deploy.underlineLog)(name), "\uFF1F"),
-        name: 'sure'
-      }]).then(function (answers) {
-        var sure = answers.sure;
+            choices = deployConfigs.map(function (config) {
+              var name = config.name;
+              return name;
+            });
 
-        if (!sure) {
-          process.exit(1);
+            _inquirer.default.prompt([{
+              type: 'list',
+              message: "\u5C06".concat((0, _utils_deploy.underlineLog)(deployConfigs[0].projectName), "\u9879\u76EE\u662F\u5426\u90E8\u7F72\u5230\u4EC0\u4E48\u73AF\u5883 \uFF1F"),
+              name: 'env',
+              choices: choices,
+              filter: function filter(val) {
+                // 使用filter将回答变为小写
+                return val.toLowerCase();
+              }
+            }]).then(function (answers) {
+              var env = answers.env;
+
+              if (!env) {
+                process.exit(1);
+              }
+
+              var targetObj = deployConfigs.find(function (item) {
+                return item.name === env;
+              });
+
+              if (targetObj) {
+                runDeploy(targetObj);
+              }
+            });
+
+          case 6:
+          case "end":
+            return _context8.stop();
         }
-
-        if (sure) {
-          runDeploy(config);
-        }
-      });
-    });
-  });
+      }
+    }, _callee8);
+  }));
+  return _handleDeploy.apply(this, arguments);
 }

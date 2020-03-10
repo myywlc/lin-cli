@@ -49,7 +49,7 @@ function checkConfigScheme(configKey, configObj, privateKey) {
   let deploySchemaKeys = null;
   const configKeys = Object.keys(configObj);
   const neededKeys = [];
-  const unConfigedKeys = [];
+  const unConfigKeys = [];
   let configValid = true;
   if (privateKey) {
     deploySchemaKeys = Object.keys(PRIVATE_KEY_DEPLOY_SCHEMA);
@@ -61,15 +61,15 @@ function checkConfigScheme(configKey, configObj, privateKey) {
       neededKeys.push(key);
     }
     if (configObj[key] === '') {
-      unConfigedKeys.push(key);
+      unConfigKeys.push(key);
     }
   }
   if (neededKeys.length > 0) {
     errorLog(`${configKey}缺少${neededKeys.join(',')}配置，请检查配置`);
     configValid = false;
   }
-  if (unConfigedKeys.length > 0) {
-    errorLog(`${configKey}中的${unConfigedKeys.join(', ')}暂未配置，请设置该配置项`);
+  if (unConfigKeys.length > 0) {
+    errorLog(`${configKey}中的${unConfigKeys.join(', ')}暂未配置，请设置该配置项`);
     configValid = false;
   }
   return configValid;
@@ -78,7 +78,7 @@ function checkConfigScheme(configKey, configObj, privateKey) {
 // 检查deploy配置是否合理
 export async function checkDeployConfig(deployConfigPath) {
   if (fs.existsSync(deployConfigPath)) {
-    const config = await import(deployConfigPath);
+    const { config } = await import(deployConfigPath);
     const { privateKey, passphrase, projectName } = config;
     const keys = Object.keys(config);
     const configs = [];
@@ -96,6 +96,6 @@ export async function checkDeployConfig(deployConfigPath) {
     }
     return configs;
   }
-  infoLog(`缺少部署相关的配置，请运行${underlineLog('deploy init')}下载部署配置`);
+  infoLog(`缺少部署相关的配置，请运行${underlineLog('lin deploy init')}创建部署配置文件`);
   return false;
 }

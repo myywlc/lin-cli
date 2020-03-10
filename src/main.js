@@ -5,7 +5,7 @@ import glob from 'glob';
 import path from 'path';
 
 async function loadActionFiles() {
-  let files = glob.sync('dist/action/*.js');
+  let files = glob.sync(path.resolve(`${__dirname}/../`, 'dist/action/*.js'));
   let promiseArr = [];
   files.forEach(item => {
     const filePath = path.resolve(`${__dirname}/../`, item);

@@ -55,7 +55,7 @@ function _loadActionFiles() {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            files = _glob.default.sync('dist/action/*.js');
+            files = _glob.default.sync(_path.default.resolve("".concat(__dirname, "/../"), 'dist/action/*.js'));
             promiseArr = [];
             files.forEach(function (item) {
               var filePath = _path.default.resolve("".concat(__dirname, "/../"), item);

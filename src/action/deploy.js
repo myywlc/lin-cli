@@ -4,16 +4,10 @@ import ora from 'ora';
 import inquirer from 'inquirer';
 import archiver from 'archiver';
 import node_ssh from 'node-ssh';
-import download from 'download-git-repo';
 import childProcess from 'child_process';
-import program from 'commander';
 import { infoLog, errorLog, successLog, underlineLog, checkDeployConfig } from '../utils/utils_deploy';
 
-const deployPath = path.join(process.cwd(), './deploy');
-const deployConfigPath = `${deployPath}/deploy.config.js`;
-const projectDir = process.cwd();
-const deployGit = 'dadaiwei/fe-deploy-cli-template';
-const tmp = 'deploy';
+const deployConfigPath = `${process.cwd()}/deploy.config.js`;
 
 const ssh = new node_ssh(); // 生成ssh实例
 
@@ -21,18 +15,16 @@ export const name = 'deploy';
 
 export const cmd = {
   description: 'deploy package',
-  usages: ['lin deploy init', 'lin deploy this'],
+  usages: ['lin deploy init', 'lin deploy'],
 };
 
-export const handle = async (key, value) => {
+export const handle = async (key) => {
   switch (key) {
     case 'init':
       checkDeployExists();
       break;
-    case 'this':
-      handleDeploy();
-      break;
     default:
+      handleDeploy();
       break;
   }
 };
@@ -41,28 +33,59 @@ export const handle = async (key, value) => {
 
 // 检查部署目录及部署配置文件是否存在
 const checkDeployExists = () => {
-  if (fs.existsSync(deployPath) && fs.existsSync(deployConfigPath)) {
-    infoLog('deploy目录下的deploy.config.js配置文件已经存在，请勿重新下载');
+  if (fs.existsSync(deployConfigPath)) {
+    infoLog('根目录下的deploy.config.js配置文件已经存在!');
     process.exit(1);
     return;
   }
-  downloadAndGenerate(deployGit);
+  writeConfigFile();
 };
 
-// 下载部署脚本配置
-const downloadAndGenerate = templateUrl => {
+const configTemplate = `const config = {
+  privateKey: '', // 本地私钥地址，位置一般在C:/Users/xxx/.ssh/id_rsa，非必填，有私钥则配置
+  passphrase: '', // 本地私钥密码，非必填，有私钥则配置
+  projectName: '', // 项目名称
+  // 根据需要进行配置，如只需部署prod线上环境，请删除dev测试环境配置，反之亦然，支持多环境部署
+  dev: {
+    // 测试环境
+    name: '测试环境',
+    script: 'npm run build', // 测试环境打包脚本
+    host: '', // 测试服务器地址
+    port: 22, // ssh port，一般默认22
+    username: '', // 登录服务器用户名
+    password: '', // 登录服务器密码
+    distPath: 'dist', // 本地打包dist目录
+    webDir: '', // // 测试环境服务器地址
+  },
+  prod: {
+    // 线上环境
+    name: '线上环境',
+    script: 'npm run build', // 线上环境打包脚本
+    host: '', // 线上服务器地址
+    port: 22, // ssh port，一般默认22
+    username: '', // 登录服务器用户名
+    password: '', // 登录服务器密码
+    distPath: 'dist', // 本地打包dist目录
+    webDir: '', // 线上环境web目录
+  },
+  // 再还有多余的环境按照这个格式写即可
+};
+
+module.exports = { config };
+`;
+
+const writeConfigFile = () => {
   const spinner = ora('开始生成部署模板');
   spinner.start();
-  download(templateUrl, tmp, { clone: false }, err => {
+  fs.writeFile(deployConfigPath, configTemplate, { encoding: 'utf8' }, (err) => {
     if (err) {
-      console.log();
       errorLog(err);
       process.exit(1);
     }
     spinner.stop();
-    successLog('模板下载成功，模板位置：deploy/deploy.config.js');
-    infoLog('请配置deploy目录下的deploy.config.js配置文件');
-    console.log('注意：请删除不必要的环境配置（如只需线上环境，请删除dev测试环境配置）');
+    successLog('配置模板创建成功');
+    infoLog('请配置根目录下的deploy.config.js配置文件');
+    errorLog('注意：请在.gitignore配置忽略deploy.config.js文件,避免关键信息泄露');
     process.exit(0);
   });
 };
@@ -79,7 +102,7 @@ async function runDeploy(config) {
     await uploadFile(webDir);
     await unzipFile(webDir);
     await deleteLocalZip();
-    successLog(`\n 恭喜您，${underlineLog(projectName)}项目${underlineLog(name)}部署成功了^_^\n`);
+    successLog(` ${underlineLog(projectName)}项目${underlineLog(name)}部署成功 \n`);
     process.exit(0);
   } catch (err) {
     errorLog(`  部署失败 ${err}`);
@@ -93,8 +116,7 @@ function execBuild(script) {
     console.log(`\n（1）${script}`);
     const spinner = ora('正在打包中');
     spinner.start();
-    console.log();
-    childProcess.execSync(script, { cwd: projectDir });
+    childProcess.execSync(script, { cwd: process.cwd() });
     spinner.stop();
     successLog('  打包成功');
   } catch (err) {
@@ -106,14 +128,14 @@ function execBuild(script) {
 // 第二部，打包zip
 function startZip(distPath) {
   return new Promise((resolve, reject) => {
-    distPath = path.resolve(projectDir, distPath);
+    distPath = path.resolve(process.cwd(), distPath);
     console.log('（2）打包成zip');
     const archive = archiver('zip', {
       zlib: { level: 9 },
     }).on('error', err => {
       throw err;
     });
-    const output = fs.createWriteStream(`${projectDir}/dist.zip`);
+    const output = fs.createWriteStream(`${process.cwd()}/dist.zip`);
     output.on('close', err => {
       if (err) {
         errorLog(`  关闭archiver异常 ${err}`);
@@ -124,7 +146,8 @@ function startZip(distPath) {
       resolve();
     });
     archive.pipe(output);
-    archive.directory(distPath, '/');
+    archive.directory(distPath, '/dist');
+    // archive.directory(`${process.cwd()}/package.json`, '/');
     archive.finalize();
   });
 }
@@ -154,7 +177,7 @@ async function connectSSH(config) {
 async function uploadFile(webDir) {
   try {
     console.log(`（4）上传zip至目录${underlineLog(webDir)}`);
-    await ssh.putFile(`${projectDir}/dist.zip`, `${webDir}/dist.zip`);
+    await ssh.putFile(`${process.cwd()}/dist.zip`, `${webDir}/dist.zip`);
     successLog('  zip包上传成功');
   } catch (err) {
     errorLog(`  zip包上传失败 ${err}`);
@@ -184,7 +207,7 @@ async function unzipFile(webDir) {
 async function deleteLocalZip() {
   return new Promise((resolve, reject) => {
     console.log('（6）开始删除本地zip包');
-    fs.unlink(`${projectDir}/dist.zip`, err => {
+    fs.unlink(`${process.cwd()}/dist.zip`, err => {
       if (err) {
         errorLog(`  本地zip包删除失败 ${err}`, err);
         reject(err);
@@ -196,37 +219,38 @@ async function deleteLocalZip() {
   });
 }
 
-function handleDeploy() {
+async function handleDeploy() {
   // 检测部署配置是否合理
-  const deployConfigs = checkDeployConfig(deployConfigPath);
+  const deployConfigs = await checkDeployConfig(deployConfigPath);
   if (!deployConfigs) {
     process.exit(1);
   }
 
-  // 注册部署命令
-  deployConfigs.forEach(config => {
-    const { command, projectName, name } = config;
-    program
-      .command(`${command}`)
-      .description(`${underlineLog(projectName)}项目${underlineLog(name)}部署`)
-      .action(() => {
-        inquirer
-          .prompt([
-            {
-              type: 'confirm',
-              message: `${underlineLog(projectName)}项目是否部署到${underlineLog(name)}？`,
-              name: 'sure',
-            },
-          ])
-          .then(answers => {
-            const { sure } = answers;
-            if (!sure) {
-              process.exit(1);
-            }
-            if (sure) {
-              runDeploy(config);
-            }
-          });
-      });
+  const choices = deployConfigs.map(config => {
+    const { name } = config;
+    return name
   });
+
+  inquirer
+    .prompt([
+      {
+        type: 'list',
+        message: `将${underlineLog(deployConfigs[0].projectName)}项目是否部署到什么环境 ？`,
+        name: 'env',
+        choices,
+        filter: function (val) { // 使用filter将回答变为小写
+          return val.toLowerCase();
+        }
+      }
+    ])
+    .then(answers => {
+      const { env } = answers;
+      if (!env) {
+        process.exit(1);
+      }
+      const targetObj = deployConfigs.find(item => item.name === env);
+      if (targetObj) {
+        runDeploy(targetObj)
+      }
+    });
 }
