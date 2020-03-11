@@ -50,6 +50,7 @@ const configTemplate = `const config = {
     // 测试环境
     name: '测试环境',
     script: 'npm run build', // 测试环境打包脚本
+    onlineScript: 'pm2 delete all && pm2 -f start /root/server/dist/main.js', // 线上运行脚本
     host: '', // 测试服务器地址
     port: 22, // ssh port，一般默认22
     username: '', // 登录服务器用户名
@@ -65,6 +66,7 @@ const configTemplate = `const config = {
     // 线上环境
     name: '线上环境',
     script: 'npm run build', // 线上环境打包脚本
+    onlineScript: 'pm2 delete all && pm2 -f start /root/server/dist/main.js', // 线上运行脚本
     host: '', // 线上服务器地址
     port: 22, // ssh port，一般默认22
     username: '', // 登录服务器用户名
