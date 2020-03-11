@@ -132,12 +132,13 @@ function runDeploy(_x2) {
 
 function _runDeploy() {
   _runDeploy = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee2(config) {
-    var script, webDir, distPath, projectName, name;
+    var script, webDir, distPath, projectName, name, _config$onlineScript, onlineScript;
+
     return _regenerator.default.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            script = config.script, webDir = config.webDir, distPath = config.distPath, projectName = config.projectName, name = config.name;
+            script = config.script, webDir = config.webDir, distPath = config.distPath, projectName = config.projectName, name = config.name, _config$onlineScript = config.onlineScript, onlineScript = _config$onlineScript === void 0 ? '' : _config$onlineScript;
             _context2.prev = 1;
             execBuild(script);
             _context2.next = 5;
@@ -153,7 +154,7 @@ function _runDeploy() {
 
           case 9:
             _context2.next = 11;
-            return unzipFile(webDir);
+            return unzipFileAndReStart(webDir, onlineScript);
 
           case 11:
             _context2.next = 13;
@@ -356,13 +357,13 @@ function _runCommand() {
   return _runCommand.apply(this, arguments);
 }
 
-function unzipFile(_x7) {
-  return _unzipFile.apply(this, arguments);
+function unzipFileAndReStart(_x7, _x8) {
+  return _unzipFileAndReStart.apply(this, arguments);
 } // 第六步，删除本地dist.zip包
 
 
-function _unzipFile() {
-  _unzipFile = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee6(webDir) {
+function _unzipFileAndReStart() {
+  _unzipFileAndReStart = (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee6(webDir, onlineScript) {
     return _regenerator.default.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -378,23 +379,36 @@ function _unzipFile() {
 
           case 6:
             (0, _utils_deploy.successLog)('  zip包解压成功');
-            _context6.next = 13;
+
+            if (!onlineScript) {
+              _context6.next = 11;
+              break;
+            }
+
+            _context6.next = 10;
+            return runCommand(onlineScript, webDir);
+
+          case 10:
+            (0, _utils_deploy.successLog)('  重启服务成功');
+
+          case 11:
+            _context6.next = 17;
             break;
 
-          case 9:
-            _context6.prev = 9;
+          case 13:
+            _context6.prev = 13;
             _context6.t0 = _context6["catch"](0);
             (0, _utils_deploy.errorLog)("  zip\u5305\u89E3\u538B\u5931\u8D25 ".concat(_context6.t0));
             process.exit(1);
 
-          case 13:
+          case 17:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[0, 9]]);
+    }, _callee6, null, [[0, 13]]);
   }));
-  return _unzipFile.apply(this, arguments);
+  return _unzipFileAndReStart.apply(this, arguments);
 }
 
 function deleteLocalZip() {

@@ -18,7 +18,7 @@ export const cmd = {
   usages: ['lin deploy init', 'lin deploy'],
 };
 
-export const handle = async (key) => {
+export const handle = async key => {
   switch (key) {
     case 'init':
       checkDeployExists();
@@ -84,7 +84,7 @@ module.exports = { config };
 const writeConfigFile = () => {
   const spinner = ora('开始生成部署模板');
   spinner.start();
-  fs.writeFile(deployConfigPath, configTemplate, { encoding: 'utf8' }, (err) => {
+  fs.writeFile(deployConfigPath, configTemplate, { encoding: 'utf8' }, err => {
     if (err) {
       errorLog(err);
       process.exit(1);
@@ -101,13 +101,13 @@ const writeConfigFile = () => {
 
 // 部署流程入口
 async function runDeploy(config) {
-  const { script, webDir, distPath, projectName, name } = config;
+  const { script, webDir, distPath, projectName, name, onlineScript = '' } = config;
   try {
     execBuild(script);
     await startZip(distPath);
     await connectSSH(config);
     await uploadFile(webDir);
-    await unzipFile(webDir);
+    await unzipFileAndReStart(webDir, onlineScript);
     await deleteLocalZip();
     successLog(` ${underlineLog(projectName)}项目${underlineLog(name)}部署成功 \n`);
     process.exit(0);
@@ -155,10 +155,10 @@ function startZip(distPath) {
 
     if (distPath instanceof Object) {
       const { files, directory } = distPath;
-      files.forEach((item) => {
+      files.forEach(item => {
         archive.file(`${process.cwd()}/${item}`, { name: item });
       });
-      directory.forEach((item) => {
+      directory.forEach(item => {
         archive.directory(`${process.cwd()}/${item}`, `/${item}`);
       });
     } else {
@@ -208,12 +208,16 @@ async function runCommand(command, webDir) {
 }
 
 // 第五步，解压zip包
-async function unzipFile(webDir) {
+async function unzipFileAndReStart(webDir, onlineScript) {
   try {
     console.log('（5）开始解压zip包');
     await runCommand(`cd ${webDir}`, webDir);
     await runCommand('unzip -o dist.zip && rm -f dist.zip', webDir);
     successLog('  zip包解压成功');
+    if (onlineScript) {
+      await runCommand(onlineScript, webDir);
+      successLog('  重启服务成功');
+    }
   } catch (err) {
     errorLog(`  zip包解压失败 ${err}`);
     process.exit(1);
@@ -245,7 +249,7 @@ async function handleDeploy() {
 
   const choices = deployConfigs.map(config => {
     const { name } = config;
-    return name
+    return name;
   });
 
   inquirer
@@ -255,10 +259,11 @@ async function handleDeploy() {
         message: `将${underlineLog(deployConfigs[0].projectName)}项目是否部署到什么环境 ？`,
         name: 'env',
         choices,
-        filter: function (val) { // 使用filter将回答变为小写
+        filter: function(val) {
+          // 使用filter将回答变为小写
           return val.toLowerCase();
-        }
-      }
+        },
+      },
     ])
     .then(answers => {
       const { env } = answers;
@@ -267,7 +272,7 @@ async function handleDeploy() {
       }
       const targetObj = deployConfigs.find(item => item.name === env);
       if (targetObj) {
-        runDeploy(targetObj)
+        runDeploy(targetObj);
       }
     });
 }
